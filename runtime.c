@@ -11,15 +11,15 @@ typedef struct Machine {
 } Machine;
 
 int read_next_byte(FILE *input){
-	char next_byte[3];
+	char next_byte[3] = "000";
 	int i;
 	for(i=0; i < 3; i++){
 		next_byte[i] = getc(input);
 	}
-	int tz = getc(input); // throw away the space between bytes
+	int tz = getc(input);
 	if (tz == EOF){ // return -1 if we hit the end of the file
 		return -1;
-	}	
+	}
 	return atoi(next_byte);
 }
 
@@ -45,8 +45,17 @@ void store(Machine *mz, int addr) {
 void add(Machine *mz, int val) {
 	mz->AX+=val;
 }
+void subtract(Machine *mz, int val) {
+	mz->AX-=val;
+}
 void jump(Machine *mz, int addr) {
 	mz->PC = addr;
+}
+void jump_if_zero(Machine *mz, int addr) {
+	if (mz->AX == 0) {
+		printf("Doing a 0 JUMP\n");
+		jump(mz, addr);
+	}
 }
 void output(Machine *mz) {
 	printf("%d\n", mz->AX);
@@ -83,6 +92,11 @@ int main(int argc, char *argv[]) {
 				load(&m, arg);
 				break;
 
+			case LOADI: ;
+				arg = next_instruction(&m);
+				loadi(&m, arg);
+				break;
+
 			case STORE: ;
 				arg = next_instruction(&m);
 				store(&m, arg);
@@ -93,10 +107,18 @@ int main(int argc, char *argv[]) {
 				add(&m, arg);
 				break;
 
+			case SUB: ;
+				arg = next_instruction(&m);
+				subtract(&m, arg);
+				break;
+
 			case JUMP: ;
 				arg = next_instruction(&m);
 				jump(&m, arg);
 				break;
+			case JMPZ: ;
+				arg = next_instruction(&m);
+				jump_if_zero(&m, arg);
 			
 			case OUTPUT: ;
 				output(&m);

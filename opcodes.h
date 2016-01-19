@@ -5,3 +5,5 @@
 #define JUMP 5
 #define HALT 6
 #define OUTPUT 7
+#define JMPZ 8
+#define LOADI 9
