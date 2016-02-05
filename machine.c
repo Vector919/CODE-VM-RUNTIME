@@ -3,15 +3,21 @@
 
 #include "machine.h"
 
+#define ERROR_NEWLINE -2
+
 int read_next_byte(FILE *input){
-	char next_byte[3] = "000";
+	char next_byte[4];
 	int i;
-	for(i=0; i < 3; i++){
-		next_byte[i] = getc(input);
-	}
-	int tz = getc(input);
-	if (tz == EOF){ // return -1 if we hit the end of the file
-		return -1;
+	char next_c;
+	for(i=0; i<3; i++){
+		next_c = getc(input);
+		if (next_c == EOF){
+			return EOF;
+		}
+		if (next_c == '\n'){
+			return ERROR_NEWLINE;
+		}
+		next_byte[i] = next_c;
 	}
 	return atoi(next_byte);
 }
@@ -49,6 +55,11 @@ void jump_if_zero(Machine *mz, int addr) {
 		jump(mz, addr);
 	}
 }
+void jump_if_not_zero(Machine *mz, int addr) {
+	if (mz->AX != 0){
+		jump(mz, addr);
+	}
+}
 void output(Machine *mz) {
 	printf("%d\n", mz->AX);
 }
@@ -58,7 +69,7 @@ void load_instructions(Machine *mz, FILE *instructions) {
 	int i = 0;
 	while (op_code !=-1){
 		op_code = read_next_byte(instructions);
-		if (op_code != -1){
+		if (op_code != -1 && op_code != ERROR_NEWLINE){
 			mz->main_mem[i] = op_code;
 			i++;
 		}

@@ -50,6 +50,9 @@ int main(int argc, char *argv[]) {
 			case JMPZ: ;
 				arg = next_instruction(&m);
 				jump_if_zero(&m, arg);
+			case JNZ: ;
+				arg = next_instruction(&m);
+				jump_if_not_zero(&m, arg);
 			
 			case OUTPUT: ;
 				output(&m);

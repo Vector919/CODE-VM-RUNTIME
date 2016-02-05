@@ -7,3 +7,4 @@
 #define OUTPUT 7
 #define JMPZ 8
 #define LOADI 9
+#define JNZ 10
